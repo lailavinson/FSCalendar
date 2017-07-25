@@ -29,13 +29,16 @@
 {
     self = [super init];
     if (self) {
-        UIFont *font = [UIFont fontWithName:@"TitilliumWeb-SemiBold" size:FSCalendarStandardTitleTextSize];
-        _titleFont = font;
+        NSString *kMNSFontName = @"TitilliumWeb-SemiBold";
+        NSString *kMNSBoldFontName = @"TitilliumWeb-Bold";
+
+        _titleFont = [UIFont fontWithName:kMNSBoldFontName size:FSCalendarStandardTitleTextSize];;
+        _weekdayFont = [UIFont fontWithName:kMNSBoldFontName size:FSCalendarStandardWeekdayTextSize];
+        _headerTitleFont = [UIFont fontWithName:kMNSBoldFontName size:FSCalendarStandardHeaderTextSize];
         // _titleFont = [UIFont systemFontOfSize:FSCalendarStandardTitleTextSize];
-        _subtitleFont = [UIFont systemFontOfSize:FSCalendarStandardSubtitleTextSize];
-        _weekdayFont = [UIFont systemFontOfSize:FSCalendarStandardWeekdayTextSize];
-        _headerTitleFont = [UIFont systemFontOfSize:FSCalendarStandardHeaderTextSize];
-        
+        // _subtitleFont = [UIFont systemFontOfSize:FSCalendarStandardSubtitleTextSize];
+//         _weekdayFont = [UIFont systemFontOfSize:FSCalendarStandardWeekdayTextSize];
+//         _headerTitleFont = [UIFont systemFontOfSize:FSCalendarStandardHeaderTextSize];
         _headerTitleColor = FSCalendarStandardTitleTextColor;
         _headerDateFormat = @"MMMM yyyy";
         _headerMinimumDissolvedAlpha = 0.2;
