@@ -79,11 +79,13 @@
     free(widths);
 }
 
+#if TARGET_INTERFACE_BUILDER
 - (void)setCalendar:(FSCalendar *)calendar
 {
     _calendar = calendar;
     [self configureAppearance];
 }
+#endif
 
 - (NSArray<UILabel *> *)weekdayLabels
 {

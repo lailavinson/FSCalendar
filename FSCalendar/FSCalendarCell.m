@@ -104,8 +104,8 @@
     }
     
     if (_subtitle) {
-        CGFloat titleHeight = self.titleLabel.font.lineHeight;
-        CGFloat subtitleHeight = self.subtitleLabel.font.lineHeight;
+        CGFloat titleHeight = self.calendar.calculator.titleHeight;
+        CGFloat subtitleHeight = self.calendar.calculator.subtitleHeight;
         
         CGFloat height = titleHeight + subtitleHeight;
         _titleLabel.frame = CGRectMake(
@@ -131,9 +131,12 @@
     
     _imageView.frame = CGRectMake(self.preferredImageOffset.x, self.preferredImageOffset.y, self.contentView.fs_width, self.contentView.fs_height);
     
+    
+    
     CGFloat titleHeight = self.bounds.size.height*5.0/6.0;
     CGFloat diameter = MIN(self.bounds.size.height*5.0/6.0,self.bounds.size.width);
     diameter = diameter > FSCalendarStandardCellDiameter ? (diameter - (diameter-FSCalendarStandardCellDiameter)*0.5) : diameter;
+    diameter = diameter * 1.2;
     _shapeLayer.frame = CGRectMake((self.bounds.size.width-diameter)/2,
                                    (titleHeight-diameter)/2,
                                    diameter,
@@ -416,13 +419,19 @@ OFFSET_PROPERTY(preferredEventOffset, PreferredEventOffset, _appearance.eventOff
 {
     [super layoutSublayersOfLayer:layer];
     if (layer == self.layer) {
-        
         CGFloat diameter = MIN(MIN(self.fs_width, self.fs_height),FSCalendarMaximumEventDotDiameter);
+        CGFloat width = 20;
         for (int i = 0; i < self.eventLayers.count; i++) {
             CALayer *eventLayer = [self.eventLayers pointerAtIndex:i];
             eventLayer.hidden = i >= self.numberOfEvents;
             if (!eventLayer.hidden) {
-                eventLayer.frame = CGRectMake(2*i*diameter, (self.fs_height-diameter)*0.5, diameter, diameter);
+                CGRect frame = self.layer.bounds;
+                frame.origin.x -= diameter * 1.5;
+                frame.origin.y -= diameter * 2.5;
+                frame.size.width = width;
+                frame.size.height = diameter;
+                eventLayer.frame = frame;
+                // eventLayer.frame = CGRectMake(2*i*diameter, (self.fs_height-diameter)*0.5, diameter, diameter);
                 if (eventLayer.cornerRadius != diameter/2) {
                     eventLayer.cornerRadius = diameter/2;
                 }

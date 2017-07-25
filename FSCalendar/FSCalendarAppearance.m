@@ -29,8 +29,9 @@
 {
     self = [super init];
     if (self) {
-        
-        _titleFont = [UIFont systemFontOfSize:FSCalendarStandardTitleTextSize];
+        UIFont *font = [UIFont fontWithName:@"TitilliumWeb-SemiBold" size:FSCalendarStandardTitleTextSize];
+        _titleFont = font;
+        // _titleFont = [UIFont systemFontOfSize:FSCalendarStandardTitleTextSize];
         _subtitleFont = [UIFont systemFontOfSize:FSCalendarStandardSubtitleTextSize];
         _weekdayFont = [UIFont systemFontOfSize:FSCalendarStandardWeekdayTextSize];
         _headerTitleFont = [UIFont systemFontOfSize:FSCalendarStandardHeaderTextSize];
@@ -83,7 +84,8 @@
 {
     if (![_titleFont isEqual:titleFont]) {
         _titleFont = titleFont;
-        [self.calendar configureAppearance];
+        self.calendar.calculator.titleHeight = -1;
+        [self.calendar setNeedsConfigureAppearance];
     }
 }
 
@@ -91,7 +93,8 @@
 {
     if (![_subtitleFont isEqual:subtitleFont]) {
         _subtitleFont = subtitleFont;
-        [self.calendar configureAppearance];
+        self.calendar.calculator.subtitleHeight = -1;
+        [self.calendar setNeedsConfigureAppearance];
     }
 }
 
@@ -99,7 +102,7 @@
 {
     if (![_weekdayFont isEqual:weekdayFont]) {
         _weekdayFont = weekdayFont;
-        [self.calendar configureAppearance];
+        [self.calendar setNeedsConfigureAppearance];
     }
 }
 
@@ -107,7 +110,7 @@
 {
     if (![_headerTitleFont isEqual:headerTitleFont]) {
         _headerTitleFont = headerTitleFont;
-        [self.calendar configureAppearance];
+        [self.calendar setNeedsConfigureAppearance];
     }
 }
 
@@ -150,7 +153,7 @@
     } else {
         [_titleColors removeObjectForKey:@(FSCalendarCellStateNormal)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)titleDefaultColor
@@ -165,7 +168,7 @@
     } else {
         [_titleColors removeObjectForKey:@(FSCalendarCellStateSelected)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)titleSelectionColor
@@ -180,7 +183,7 @@
     } else {
         [_titleColors removeObjectForKey:@(FSCalendarCellStateToday)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)titleTodayColor
@@ -195,7 +198,7 @@
     } else {
         [_titleColors removeObjectForKey:@(FSCalendarCellStatePlaceholder)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)titlePlaceholderColor
@@ -210,7 +213,7 @@
     } else {
         [_titleColors removeObjectForKey:@(FSCalendarCellStateWeekend)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)titleWeekendColor
@@ -225,7 +228,7 @@
     } else {
         [_subtitleColors removeObjectForKey:@(FSCalendarCellStateNormal)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 -(UIColor *)subtitleDefaultColor
@@ -240,7 +243,7 @@
     } else {
         [_subtitleColors removeObjectForKey:@(FSCalendarCellStateSelected)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)subtitleSelectionColor
@@ -255,7 +258,7 @@
     } else {
         [_subtitleColors removeObjectForKey:@(FSCalendarCellStateToday)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)subtitleTodayColor
@@ -270,7 +273,7 @@
     } else {
         [_subtitleColors removeObjectForKey:@(FSCalendarCellStatePlaceholder)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)subtitlePlaceholderColor
@@ -285,7 +288,7 @@
     } else {
         [_subtitleColors removeObjectForKey:@(FSCalendarCellStateWeekend)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)subtitleWeekendColor
@@ -300,7 +303,7 @@
     } else {
         [_backgroundColors removeObjectForKey:@(FSCalendarCellStateSelected)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)selectionColor
@@ -315,7 +318,7 @@
     } else {
         [_backgroundColors removeObjectForKey:@(FSCalendarCellStateToday)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)todayColor
@@ -330,7 +333,7 @@
     } else {
         [_backgroundColors removeObjectForKey:@(FSCalendarCellStateToday|FSCalendarCellStateSelected)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)todaySelectionColor
@@ -342,7 +345,7 @@
 {
     if (![_eventDefaultColor isEqual:eventDefaultColor]) {
         _eventDefaultColor = eventDefaultColor;
-        [self.calendar configureAppearance];
+        [self.calendar setNeedsConfigureAppearance];
     }
 }
 
@@ -353,7 +356,7 @@
     } else {
         [_borderColors removeObjectForKey:@(FSCalendarCellStateNormal)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)borderDefaultColor
@@ -368,7 +371,7 @@
     } else {
         [_borderColors removeObjectForKey:@(FSCalendarCellStateSelected)];
     }
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (UIColor *)borderSelectionColor
@@ -382,7 +385,7 @@
     borderRadius = MIN(1.0, borderRadius);
     if (_borderRadius != borderRadius) {
         _borderRadius = borderRadius;
-        [self.calendar configureAppearance];
+        [self.calendar setNeedsConfigureAppearance];
     }
 }
 
@@ -390,7 +393,7 @@
 {
     if (![_weekdayTextColor isEqual:weekdayTextColor]) {
         _weekdayTextColor = weekdayTextColor;
-        [self.calendar configureAppearance];
+        [self.calendar setNeedsConfigureAppearance];
     }
 }
 
@@ -398,7 +401,7 @@
 {
     if (![_headerTitleColor isEqual:color]) {
         _headerTitleColor = color;
-        [self.calendar configureAppearance];
+        [self.calendar setNeedsConfigureAppearance];
     }
 }
 
@@ -406,7 +409,7 @@
 {
     if (_headerMinimumDissolvedAlpha != headerMinimumDissolvedAlpha) {
         _headerMinimumDissolvedAlpha = headerMinimumDissolvedAlpha;
-        [self.calendar configureAppearance];
+        [self.calendar setNeedsConfigureAppearance];
     }
 }
 
@@ -414,7 +417,7 @@
 {
     if (![_headerDateFormat isEqual:headerDateFormat]) {
         _headerDateFormat = headerDateFormat;
-        [self.calendar configureAppearance];
+        [self.calendar setNeedsConfigureAppearance];
     }
 }
 
@@ -422,7 +425,7 @@
 {
     if (_caseOptions != caseOptions) {
         _caseOptions = caseOptions;
-        [self.calendar configureAppearance];
+        [self.calendar setNeedsConfigureAppearance];
     }
 }
 
@@ -512,7 +515,7 @@
 
 - (void)invalidateAppearance
 {
-    [self.calendar configureAppearance];
+    [self.calendar setNeedsConfigureAppearance];
 }
 
 - (void)setAdjustsFontSizeToFitContentSize:(BOOL)adjustsFontSizeToFitContentSize {}

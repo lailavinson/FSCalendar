@@ -69,6 +69,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 @property (weak  , nonatomic) FSCalendarHeaderTouchDeliver *deliver;
 
 @property (assign, nonatomic) BOOL                       needsAdjustingViewFrame;
+@property (assign, nonatomic) BOOL                       needsConfigureAppearance;
 @property (assign, nonatomic) BOOL                       needsLayoutForWeekMode;
 @property (assign, nonatomic) BOOL                       needsRequestingBoundingDates;
 @property (assign, nonatomic) CGFloat                    preferredHeaderHeight;
@@ -86,6 +87,8 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 
 @property (strong, nonatomic) NSIndexPath *lastPressedIndexPath;
 @property (strong, nonatomic) NSMapTable *visibleSectionHeaders;
+
+@property (assign, nonatomic) CFRunLoopObserverRef runLoopObserver;
 
 - (void)orientationDidChange:(NSNotification *)notification;
 
@@ -119,7 +122,6 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 
 - (void)adjustMonthPosition;
 - (BOOL)requestBoundingDatesIfNecessary;
-- (void)configureAppearance;
 
 @end
 
@@ -184,6 +186,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     _pagingEnabled = YES;
     _scrollEnabled = YES;
     _needsAdjustingViewFrame = YES;
+    _needsConfigureAppearance = YES;
     _needsRequestingBoundingDates = YES;
     _orientation = self.currentCalendarOrientation;
     _placeholderType = FSCalendarPlaceholderTypeFillSixRows;
@@ -227,19 +230,18 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
         
         UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
         view.backgroundColor = FSCalendarStandardLineColor;
-        view.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin; // Stick to top
         [self addSubview:view];
         self.topBorder = view;
         
         view = [[UIView alloc] initWithFrame:CGRectZero];
         view.backgroundColor = FSCalendarStandardLineColor;
-        view.autoresizingMask = UIViewAutoresizingFlexibleTopMargin; // Stick to bottom
         [self addSubview:view];
         self.bottomBorder = view;
         
     }
     
     [self invalidateLayout];
+    [self registerMainRunloopObserver];
     
     // Assistants
     self.transitionCoordinator = [[FSCalendarTransitionCoordinator alloc] initWithCalendar:self];
@@ -251,8 +253,10 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 
 - (void)dealloc
 {
-    self.collectionView.delegate = nil;
-    self.collectionView.dataSource = nil;
+    _collectionView.delegate = nil;
+    _collectionView.dataSource = nil;
+    
+    CFRunLoopRemoveObserver(CFRunLoopGetCurrent(), self.runLoopObserver, kCFRunLoopCommonModes);
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
 }
@@ -361,7 +365,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
             _collectionView.frame = _daysContainer.bounds;
             
         }
-        _collectionView.fs_height = FSCalendarHalfFloor(_collectionView.fs_height);
+
         _topBorder.frame = CGRectMake(0, -1, self.fs_width, 1);
         _bottomBorder.frame = CGRectMake(0, self.fs_height, self.fs_width, 1);
         _scopeHandle.fs_bottom = _bottomBorder.fs_top;
@@ -758,7 +762,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
         [self invalidateDateTools];
         [self invalidateHeaders];
         [self.collectionView reloadData];
-        [self configureAppearance];
+        [self setNeedsConfigureAppearance];
     }
 }
 
@@ -879,7 +883,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     if (![_locale isEqual:locale]) {
         _locale = locale.copy;
         [self invalidateDateTools];
-        [self configureAppearance];
+        [self setNeedsConfigureAppearance];
         if (self.hasValidateVisibleLayout) {
             [self invalidateHeaders];
         }
@@ -1351,6 +1355,39 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
 #endif
 }
 
+- (void)registerMainRunloopObserver
+{
+    __weak __typeof__(self) weakSelf = self;
+    CFRunLoopRef runLoop = CFRunLoopGetCurrent();
+    CFOptionFlags activities = (kCFRunLoopAfterWaiting|kCFRunLoopEntry);
+    CFRunLoopObserverContext context = {
+        0,
+        (__bridge  void *)weakSelf,
+        NULL,
+        NULL,
+        NULL
+    };
+    self.runLoopObserver = CFRunLoopObserverCreate(NULL,
+                                                   activities,
+                                                   YES,
+                                                   INT_MAX,
+                                                   &FSCalendarRunLoopCallback,
+                                                   &context);
+    CFRunLoopAddObserver(runLoop, self.runLoopObserver, kCFRunLoopCommonModes);
+}
+
+void FSCalendarRunLoopCallback(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info) {
+    FSCalendar *calendar = (__bridge FSCalendar *)(info);
+    if (calendar.needsConfigureAppearance) {
+        calendar.needsConfigureAppearance = NO;
+        [calendar.visibleCells makeObjectsPerformSelector:@selector(configureAppearance)];
+        [calendar.visibleStickyHeaders makeObjectsPerformSelector:@selector(configureAppearance)];
+        [calendar.calendarHeaderView configureAppearance];
+        [calendar.calendarWeekdayView configureAppearance];
+    }
+}
+
+
 - (void)invalidateDateTools
 {
     _gregorian.locale = _locale;
@@ -1662,12 +1699,13 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     return NO;
 }
 
-- (void)configureAppearance
+- (void)setNeedsConfigureAppearance
 {
-    [self.visibleCells makeObjectsPerformSelector:@selector(configureAppearance)];
-    [self.visibleStickyHeaders makeObjectsPerformSelector:@selector(configureAppearance)];
-    [self.calendarHeaderView configureAppearance];
+    _needsConfigureAppearance = YES;
+#if TARGET_INTERFACE_BUILDER
     [self.calendarWeekdayView configureAppearance];
+    [self.calendarHeaderView configureAppearance];
+#endif
 }
 
 @end

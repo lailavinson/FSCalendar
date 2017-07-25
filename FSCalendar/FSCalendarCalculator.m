@@ -38,6 +38,8 @@
     self = [super init];
     if (self) {
         self.calendar = calendar;
+        self.titleHeight = FSCalendarAutomaticDimension;
+        self.subtitleHeight = FSCalendarAutomaticDimension;
         
         self.months = [NSMutableDictionary dictionary];
         self.monthHeads = [NSMutableDictionary dictionary];
@@ -60,6 +62,24 @@
         return self.calendar;
     }
     return [super forwardingTargetForSelector:selector];
+}
+
+#pragma mark - Public properties
+
+- (CGFloat)titleHeight
+{
+    if (_titleHeight == FSCalendarAutomaticDimension) {
+        _titleHeight = [@"1" sizeWithAttributes:@{NSFontAttributeName:self.calendar.appearance.titleFont}].height;
+    }
+    return _titleHeight;
+}
+
+- (CGFloat)subtitleHeight
+{
+    if (_subtitleHeight == FSCalendarAutomaticDimension) {
+        _subtitleHeight = [@"1" sizeWithAttributes:@{NSFontAttributeName:self.calendar.appearance.subtitleFont}].height;
+    }
+    return _subtitleHeight;
 }
 
 #pragma mark - Public functions

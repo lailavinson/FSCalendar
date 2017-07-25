@@ -46,7 +46,6 @@
 
 - (void)invalidateHeaders;
 - (void)adjustMonthPosition;
-- (void)configureAppearance;
 
 - (BOOL)isPageInRange:(NSDate *)page;
 - (BOOL)isDateInRange:(NSDate *)date;
