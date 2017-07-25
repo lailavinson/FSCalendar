@@ -138,7 +138,7 @@
     diameter = diameter > FSCalendarStandardCellDiameter ? (diameter - (diameter-FSCalendarStandardCellDiameter)*0.5) : diameter;
     diameter = diameter * 1.3;
     _shapeLayer.frame = CGRectMake((self.bounds.size.width-diameter)/2,
-                                   (titleHeight-diameter)/2,
+                                   (titleHeight-diameter+1)/2,
                                    diameter,
                                    diameter);
 
