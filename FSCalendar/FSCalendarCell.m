@@ -123,7 +123,7 @@
     } else {
         _titleLabel.frame = CGRectMake(
                                        self.preferredTitleOffset.x,
-                                       self.preferredTitleOffset.y,
+                                       self.preferredTitleOffset.y - 1.4,
                                        self.contentView.fs_width,
                                        floor(self.contentView.fs_height*5.0/6.0)
                                        );
@@ -136,7 +136,7 @@
     CGFloat titleHeight = self.bounds.size.height*5.0/6.0;
     CGFloat diameter = MIN(self.bounds.size.height*5.0/6.0,self.bounds.size.width);
     diameter = diameter > FSCalendarStandardCellDiameter ? (diameter - (diameter-FSCalendarStandardCellDiameter)*0.5) : diameter;
-    diameter = diameter * 1.2;
+    diameter = diameter * 1.3;
     _shapeLayer.frame = CGRectMake((self.bounds.size.width-diameter)/2,
                                    (titleHeight-diameter)/2,
                                    diameter,
@@ -420,15 +420,15 @@ OFFSET_PROPERTY(preferredEventOffset, PreferredEventOffset, _appearance.eventOff
     [super layoutSublayersOfLayer:layer];
     if (layer == self.layer) {
         CGFloat diameter = MIN(MIN(self.fs_width, self.fs_height),FSCalendarMaximumEventDotDiameter);
-        CGFloat width = 20;
+        CGFloat kMNSWidth = 20;
         for (int i = 0; i < self.eventLayers.count; i++) {
             CALayer *eventLayer = [self.eventLayers pointerAtIndex:i];
             eventLayer.hidden = i >= self.numberOfEvents;
             if (!eventLayer.hidden) {
                 CGRect frame = self.layer.bounds;
                 frame.origin.x -= diameter * 1.5;
-                frame.origin.y -= diameter * 2.5;
-                frame.size.width = width;
+                frame.origin.y -= diameter * 3;
+                frame.size.width = kMNSWidth;
                 frame.size.height = diameter;
                 eventLayer.frame = frame;
                 // eventLayer.frame = CGRectMake(2*i*diameter, (self.fs_height-diameter)*0.5, diameter, diameter);
