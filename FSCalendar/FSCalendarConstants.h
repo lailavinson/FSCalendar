@@ -82,10 +82,16 @@ typedef NS_ENUM(NSUInteger, FSCalendarCellShape) {
     FSCalendarCellShapeRectangle = 1
 };
 
+
 typedef NS_ENUM(NSUInteger, FSCalendarUnit) {
     FSCalendarUnitMonth = NSCalendarUnitMonth,
     FSCalendarUnitWeekOfYear = NSCalendarUnitWeekOfYear,
     FSCalendarUnitDay = NSCalendarUnitDay
+};
+
+typedef NS_ENUM(NSUInteger, MNSCalendarScopeTag) {
+    MNSCalendarScopeTagMonth    = 0,
+    MNSCalendarScopeTagWeek = 1
 };
 
 static inline void FSCalendarSliceCake(CGFloat cake, NSInteger count, CGFloat *pieces) {

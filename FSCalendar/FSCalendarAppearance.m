@@ -29,11 +29,14 @@
 {
     self = [super init];
     if (self) {
+        NSString *kMNSRegularFontName = @"TitilliumWeb-Regular";
         NSString *kMNSFontName = @"TitilliumWeb-SemiBold";
         NSString *kMNSBoldFontName = @"TitilliumWeb-Bold";
 
-        _titleFont = [UIFont fontWithName:kMNSBoldFontName size:FSCalendarStandardTitleTextSize];;
+        _titleFont = [UIFont fontWithName:kMNSBoldFontName size:FSCalendarStandardTitleTextSize];
+        _titleFontWeek = [UIFont fontWithName:kMNSRegularFontName size:FSCalendarStandardTitleTextSize];
         _weekdayFont = [UIFont fontWithName:kMNSBoldFontName size:FSCalendarStandardWeekdayTextSize];
+        _weekdayFontWeek = [UIFont fontWithName:kMNSBoldFontName size:FSCalendarStandardWeekdayTextSize];
         _headerTitleFont = [UIFont fontWithName:kMNSBoldFontName size:FSCalendarStandardHeaderTextSize];
         // _titleFont = [UIFont systemFontOfSize:FSCalendarStandardTitleTextSize];
         // _subtitleFont = [UIFont systemFontOfSize:FSCalendarStandardSubtitleTextSize];
@@ -85,10 +88,15 @@
 
 - (void)setTitleFont:(UIFont *)titleFont
 {
-    if (![_titleFont isEqual:titleFont]) {
-        _titleFont = titleFont;
-        self.calendar.calculator.titleHeight = -1;
+    if (self.calendar.tag == MNSCalendarScopeTagWeek && !([_titleFontWeek isEqual:titleFont])) {
+        _titleFontWeek = titleFont;
         [self.calendar setNeedsConfigureAppearance];
+    } else {
+        if (![_titleFont isEqual:titleFont]) {
+            _titleFont = titleFont;
+            self.calendar.calculator.titleHeight = -1;
+            [self.calendar setNeedsConfigureAppearance];
+        }
     }
 }
 
@@ -103,10 +111,16 @@
 
 - (void)setWeekdayFont:(UIFont *)weekdayFont
 {
-    if (![_weekdayFont isEqual:weekdayFont]) {
-        _weekdayFont = weekdayFont;
+    if (self.calendar.tag == MNSCalendarScopeTagWeek && !([_weekdayFontWeek isEqual:weekdayFont])) {
+        _weekdayFontWeek = weekdayFont;
         [self.calendar setNeedsConfigureAppearance];
+    } else {
+        if (![_weekdayFont isEqual:weekdayFont]) {
+            _weekdayFont = weekdayFont;
+            [self.calendar setNeedsConfigureAppearance];
+        }
     }
+
 }
 
 - (void)setHeaderTitleFont:(UIFont *)headerTitleFont
@@ -498,7 +512,8 @@
 
 - (void)setTitleTextSize:(CGFloat)titleTextSize
 {
-    self.titleFont = [UIFont fontWithName:self.titleFont.fontName size:titleTextSize];
+    NSString *fontName = self.calendar.tag == MNSCalendarScopeTagWeek ? _titleFontWeek.fontName : _titleFont.fontName;
+    self.titleFont = [UIFont fontWithName:fontName size:titleTextSize];
 }
 
 - (void)setSubtitleTextSize:(CGFloat)subtitleTextSize
@@ -508,7 +523,8 @@
 
 - (void)setWeekdayTextSize:(CGFloat)weekdayTextSize
 {
-    self.weekdayFont = [UIFont fontWithName:self.weekdayFont.fontName size:weekdayTextSize];
+    NSString *fontName = self.calendar.tag == MNSCalendarScopeTagWeek ? _weekdayFontWeek.fontName : _weekdayFontWeek.fontName;
+    self.weekdayFont = [UIFont fontWithName:fontName size:weekdayTextSize];
 }
 
 - (void)setHeaderTitleTextSize:(CGFloat)headerTitleTextSize

@@ -50,6 +50,12 @@ typedef NS_OPTIONS(NSUInteger, FSCalendarSeparators) {
  */
 @property (strong, nonatomic) UIFont   *titleFont;
 
+
+/**
+ * The font of the day text when calendar scope is week.
+ */
+@property (strong, nonatomic) UIFont   *titleFontWeek;
+
 /**
  * The font of the subtitle text.
  */
@@ -59,6 +65,11 @@ typedef NS_OPTIONS(NSUInteger, FSCalendarSeparators) {
  * The font of the weekday text.
  */
 @property (strong, nonatomic) UIFont   *weekdayFont;
+
+/**
+ * The font of the weekday text when calendar scope is week.
+ */
+@property (strong, nonatomic) UIFont   *weekdayFontWeek;
 
 /**
  * The font of the month text.
